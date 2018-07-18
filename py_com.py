@@ -26,7 +26,7 @@ for i in range(0,last_number_of_port_name+1):
             print("idc what is it"+res)
     except srl.serialutil.SerialException:
         print("connection to"+port+" failed")
-        if last_number_of_port_name!=11:
+        if i!=last_number_of_port_name:
             pass
         else:
             print("Cant find id=03 device")
