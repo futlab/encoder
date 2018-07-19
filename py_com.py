@@ -1,7 +1,10 @@
-#!/usr/bin/python3
-
+#!/usr/bin/python
+import rospy
+from std_msgs.msg import Float32
 import serial as srl
 import time
+
+
 
 last_number_of_port_name = 11
 port = ""
@@ -23,15 +26,19 @@ for i in range(0,last_number_of_port_name+1):
             break
         else:
             ser.close()
-            print("idc what is it"+res)
+            print("connection to "+port+" closed")
     except srl.serialutil.SerialException:
-        print("connection to"+port+" failed")
+        print("connection to "+port+" failed")
         if i!=last_number_of_port_name:
             pass
         else:
             print("Cant find id=03 device")
             print("Exit: 1")
             exit(1)
+
+pub = rospy.Publisher('/wheel_module', Float32, queue_size=10)
+rospy.init_node('wheel_module')
+#rate = rospy.Rate(10) # 10hz
 
 if ser.isopen():
     res = ""
@@ -40,10 +47,15 @@ if ser.isopen():
     print("Well done!")
     while True:
         ser.write(cm_teak)
-        time.sleep(1)
+        time.sleep(0.025)
         while ser.inWaiting() > 0:
             res += ser.read(1)
+        less, numb = res.split(" ")
+        if not rospy.is_shutdown():
+            rospy.loginfo(float(numb))
+            pub.publish(float(numb))
+            #rate.sleep()
         print("{"+res+" "+str(time.time()-time_start)+" seconds }")
         res = ""
 else:
-    print("idc, but serial is not open")
+    print("Serial is not open")
