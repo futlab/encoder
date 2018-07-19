@@ -1,0 +1,7 @@
+#! /usr/bin/env python
+
+import wheel_module.wheel_module
+
+
+if __name__ == '__main__':
+    wheel_module.wheel_module.start()
